@@ -1,0 +1,27 @@
+FROM gcr.io/PROJECT_ID/protoc
+
+# Install Go GRPC and Protobuf libraries
+RUN go get -u google.golang.org/grpc
+RUN go get -u github.com/golang/protobuf/proto
+RUN go get -u github.com/golang/protobuf/protoc-gen-go
+RUN export PATH=$PATH:$GOPATH/bin
+
+# Copy source from host into image
+COPY . /go/src/app
+WORKDIR /go/src/app
+
+RUN git clone https://github.com/googleapis/googleapis.git
+
+# Compile stubs for service
+RUN protoc \
+        --proto_path=.:googleapis \
+        --go_out=plugins=grpc:. \
+        customer/customer.proto
+
+RUN ls -al
+
+RUN go get -v app/server
+
+RUN go install app/server
+
+ENTRYPOINT ["/go/bin/server"]

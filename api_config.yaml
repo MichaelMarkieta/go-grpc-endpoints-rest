@@ -1,0 +1,18 @@
+type: google.api.Service
+config_version: 3
+
+name: SERVICE_NAME
+
+title: Customer API
+
+apis:
+- name: customer.Customer
+
+usage:
+  rules:
+    - selector: "customer.Customer.GetCustomers"
+      allow_unregistered_calls: true
+    - selector: "customer.Customer.CreateCustomer"
+      allow_unregistered_calls: true
+    - selector: "customer.Customer.GetHealth"
+      allow_unregistered_calls: true  

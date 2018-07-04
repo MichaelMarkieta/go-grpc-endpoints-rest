@@ -1,0 +1,45 @@
+#FROM golang:alpine
+
+# Update and install dependencies
+#RUN apk update && apk add git && apk add protobuf autoconf automake libtool curl make g++ unzip
+
+# Install protobuf
+#RUN git clone https://github.com/google/protobuf.git
+#WORKDIR protobuf
+#RUN git submodule update --init --recursive
+#RUN ./autogen.sh
+#RUN ./configure
+#RUN make
+#RUN make install
+#RUN ldconfig /; echo \$?
+
+FROM gcr.io/swarm-ecobee-dataflow/ecobee-protoc
+
+# Install Go GRPC and Protobuf libraries
+RUN go get -u google.golang.org/grpc
+RUN go get -u github.com/golang/protobuf/proto
+RUN go get -u github.com/golang/protobuf/protoc-gen-go
+RUN export PATH=$PATH:$GOPATH/bin
+
+# Copy source from host into image
+COPY . /go/src/app
+WORKDIR /go/src
+
+# Compile stubs for service
+RUN protoc \
+        -I/usr/local/include -I. \
+        app/customer/customer.proto \
+        --go_out=plugins=grpc:.
+
+# Compile stubs for REST HTTP annotations
+RUN protoc \
+        -I/usr/local/include -I. \
+        app/google/api/http.proto \
+        app/google/api/annotations.proto \
+        --go_out=plugins=grpc:.
+
+RUN go get -v app/client
+
+RUN go install app/client
+
+ENTRYPOINT ["/go/bin/client"]
