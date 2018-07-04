@@ -2,24 +2,20 @@
 
 ```
 .
-├── api_config.yaml
+├── api_config.yaml	Cloud Endpoints configuration
 ├── client
-│   └── main.go
-├── cloudbuild.yaml
+│   └── main.go		Client application (gRPC)
+├── cloudbuild.yaml	Cloud Container Builder configuration
 ├── customer
-│   └── customer.proto
-├── deployment.yaml
-├── Dockerfile
-├── Dockerfile_client
-├── google
-│   └── api
-│       ├── annotations.proto
-│       └── http.proto
+│   └── customer.proto	Protobuf RPC service definition
+├── deployment.yaml	Google Kubernetes Engine deployment configuration
+├── Dockerfile		Golang gRPC server container definition
+├── Dockerfile_client	Golang gRPC client container definition
 ├── protoc
-│   └── Dockerfile
+│   └── Dockerfile	Protobuf container definition
 ├── README.md
 └── server
-    └── main.go
+    └── main.go		API server (gRPC)
 ```
 
 #### Developer notes
